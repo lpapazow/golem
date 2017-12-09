@@ -3,8 +3,8 @@ import json
 
 class BasicExtractor:
     def exportJson(self, fullPath):
-        with open(path, 'w') as exportFile:
-            exportFile.write(self.data)
+        with open(fullPath, 'w') as exportFile:
+            exportFile.write(self.data.to_json())
 
     def loadJson(self, fullPath):
         with open(fullPath, 'r') as infile:

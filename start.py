@@ -9,7 +9,7 @@ def main():
     sampleExtractor = tweetcontainstagextractor.TweetContainsTagExtracor()
     sampleExtractor.loadJson('data/data_json/data.json')
     sampleExtractor.applyTransformation()
-    jsonData = parser.exportJson('data/data_json/data_contains_tag.json')
+    jsonData = sampleExtractor.exportJson('data/data_json/data_contains_tag.json')
 
 if __name__ == '__main__':
     main()

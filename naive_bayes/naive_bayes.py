@@ -4,13 +4,14 @@ import nltk.classify.util
 from nltk.classify import NaiveBayesClassifier
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import pandas
+from nltk.stem.porter import PorterStemmer
 
 
-def get_useful_word(words):
+def get_useful_word(words, stemmer):
     words = nltk.word_tokenize(words)
     useful_words = [word for word in words if word not in stopwords.words(
         "english") or len(word) == 1]
+    useful_words = [stemmer.stem(word) for word in useful_words]
     my_dict = dict([(word, True) for word in useful_words])
     return my_dict
 
@@ -18,9 +19,10 @@ def get_useful_word(words):
 def read_tweets():
     positive_tweets = []
     negative_tweets = []
+    stemmer = PorterStemmer()
     with open('data/data.txt', encoding='latin-1') as tweets, open('data/data_labels.txt', encoding='latin-1') as labels:
         for tweet, label in zip(tweets, labels):
-            useful_words = get_useful_word(tweet)
+            useful_words = get_useful_word(tweet, stemmer)
             if(int(label[0]) == 1):
                 positive_tweets.append((useful_words, 'positive'))
             else:

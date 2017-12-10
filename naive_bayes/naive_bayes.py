@@ -9,23 +9,24 @@ import pandas
 
 def get_useful_word(words):
     words = nltk.word_tokenize(words)
-    words = ({word: True for word in words if word not in stopwords.words(
-        'english') or len(word) == 1})
-    return words
+    useful_words = [word for word in words if word not in stopwords.words(
+        "english") or len(word) == 1]
+    my_dict = dict([(word, True) for word in useful_words])
+    return my_dict
 
 
 def read_tweets():
     positive_tweets = []
     negative_tweets = []
     with open('data/data.txt', encoding='latin-1') as tweets, open('data/data_labels.txt', encoding='latin-1') as labels:
-        for tweet, label in (tweets, labels):
+        for tweet, label in zip(tweets, labels):
             useful_words = get_useful_word(tweet)
             if(int(label[0]) == 1):
-                positive_tweets.append((useful_words, 'negative'))
+                positive_tweets.append((useful_words, 'positive'))
             else:
-                negative_tweets.append((useful_words, 'positive'))
+                negative_tweets.append((useful_words, 'negative'))
 
-            return positive_tweets, negative_tweets
+        return positive_tweets, negative_tweets
 
 
 if __name__ == "__main__":

@@ -11,14 +11,15 @@ def main():
         os.makedirs('data/data_json')
 
     parser.export_json('data/data_json/data.json')
-    sample_pipeline = pipeline.Pipeline()
-    sample_pipeline.load_json('data/data_json/data.json')
+    data = parser.get_pandas_data_frame()
 
     contains_tag_transformer = tweet_contains_tag_transformer.TweetContainsTagTransformer()
 
-    data = sample_pipeline.transform(contains_tag_transformer)
+    sample_pipeline = pipeline.Pipeline(contains_tag_transformer)
 
-    parser.set_pandas_data_frame(data)
+    transformed_data = sample_pipeline.transform(data)
+
+    parser.set_pandas_data_frame(transformed_data)
     parser.export_json('data/data_json/data_contains_tag.json')
 
 if __name__ == '__main__':

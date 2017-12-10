@@ -4,15 +4,15 @@ import pandas as pd
 
 
 class Pipeline:
-    def __init__(self, data=None):
-        self.data = data
+    def __init__(self, *transformers):
+        self.transformers = transformers
 
-    def load_json(self, fullPath):
-        with open(fullPath, 'r') as infile:
-            jsonFile = json.load(infile)
-        self.data = pd.DataFrame.from_records(jsonFile)
+    def remove_transformers(self, *transformers):
+        for transformer in self.transformers:
+            if transformer in transformers:
+                self.transformers.remove(transformer) 
 
-    def transform(self, *transformers):
-        for transformer in transformers:
-            self.data = transformer.transform(self.data)
-        return self.data
+    def transform(self, data):
+        for transformer in self.transformers:
+            data = transformer.transform(data)
+        return data

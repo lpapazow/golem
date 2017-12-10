@@ -9,8 +9,9 @@ from nltk.stem.porter import PorterStemmer
 
 def get_useful_word(words, stemmer):
     words = nltk.word_tokenize(words)
-    useful_words = [word for word in words if word not in stopwords.words(
-        "english") or len(word) == 1]
+    # TODO: only one for-loop
+    useful_words = [word for word in words if word not in stopwords.words("english")]
+    useful_words = [word for word in words if len(word) != 1]
     useful_words = [stemmer.stem(word) for word in useful_words]
     my_dict = dict([(word, True) for word in useful_words])
     return my_dict
@@ -35,10 +36,9 @@ if __name__ == "__main__":
     positive_tweets, negative_tweets = read_tweets()
 
     train_set = negative_tweets[:int(
-        (.8) * len(negative_tweets))] + positive_tweets[:int((.8) * len(positive_tweets))]
+        (.9) * len(negative_tweets))] + positive_tweets[:int((.9) * len(positive_tweets))]
     test_set = negative_tweets[int(
-        (.8) * len(negative_tweets)):] + positive_tweets[int((.8) * len(positive_tweets)):]
-
+        (.1) * len(negative_tweets)):] + positive_tweets[int((.1) * len(positive_tweets)):]
     classifier = NaiveBayesClassifier.train(train_set)
     accuracy = nltk.classify.util.accuracy(classifier, test_set)
     print(accuracy * 100)

@@ -36,9 +36,9 @@ if __name__ == "__main__":
     positive_tweets, negative_tweets = read_tweets()
 
     train_set = negative_tweets[:int(
-        (.9) * len(negative_tweets))] + positive_tweets[:int((.9) * len(positive_tweets))]
+        (.8) * len(negative_tweets))] + positive_tweets[:int((.8) * len(positive_tweets))]
     test_set = negative_tweets[int(
-        (.1) * len(negative_tweets)):] + positive_tweets[int((.1) * len(positive_tweets)):]
+        (.8) * len(negative_tweets)):] + positive_tweets[int((.8) * len(positive_tweets)):]
     classifier = NaiveBayesClassifier.train(train_set)
     accuracy = nltk.classify.util.accuracy(classifier, test_set)
     print(accuracy * 100)

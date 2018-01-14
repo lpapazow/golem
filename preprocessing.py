@@ -16,6 +16,11 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+
 def evaluate_features(X, y, clf=None):
     """General helper function for evaluating effectiveness of passed features in ML model
 
@@ -61,6 +66,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-

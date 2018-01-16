@@ -2,9 +2,13 @@ from golem.parsers import csvtojson
 import nltk
 import pandas as pd
 import numpy as np
+import codecs
+import nltk.stem
+
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer
+from nltk.tokenize import TweetTokenizer
 
 
 def run_model(X_train, y_train, X_dev, y_dev, clf):
@@ -67,8 +71,19 @@ if __name__ == '__main__':
 
     data_merged=pd.concat([df, data_dev])
 
-    count_vectorizer = CountVectorizer(
-        analyzer="word", tokenizer=nltk.word_tokenize,
+    tknzr = TweetTokenizer(preserve_case=False, reduce_len=False, strip_handles=True)
+################################ Stemming ################################
+    stemmer = nltk.stem.LancasterStemmer() # may use snowball stemmer, for log regressioon lancaster works better
+
+    class StemmedCountVectorizer(CountVectorizer):
+        def build_analyzer(self):
+            analyzer = super(StemmedCountVectorizer, self).build_analyzer()
+            return lambda doc: ([stemmer.stem(w) for w in analyzer(doc)])
+
+    ################################ Stemming ################################
+
+    count_vectorizer = StemmedCountVectorizer(
+        analyzer="word", tokenizer=tknzr.tokenize,
         preprocessor=None, stop_words='english', max_features=None)
 
     bag_of_words = count_vectorizer.fit_transform(data_merged['Tweet'])
@@ -81,14 +96,27 @@ if __name__ == '__main__':
     print("Score train: " + str(score_train)) # 0.843431663394
     print("Score dev: " + str(score_dev)) # 0.421218961625
 
-    print("Logit with regularization 5 - this value gives best dev set performance")
-    score_train, score_dev = evaluate_model(df, data_dev, bag_of_words[0:6838], bag_of_words[6838:7724], LogisticRegression(C=5))
-    print("Score train: " + str(score_train)) # 0.946175782393
-    print("Score dev: " + str(score_dev)) # 0.446089970977
+    regularizations = [2, 3, 5, 8, 13, 377]
+    max_reg = 0
+    max_score_dev = 0
+    max_score_train = 0
+    for reg in regularizations:
+        score_train, score_dev = evaluate_model(df, data_dev, bag_of_words[0:6838], bag_of_words[6838:7724], LogisticRegression(C=reg))
+        if score_dev > max_score_dev:
+            max_score_dev = score_dev
+            max_reg = reg
+            max_score_train = score_train
 
+    print("Logit with regularization " + str(max_reg))
+    print("Score train: " + str(max_score_train))
+    print("Score dev: " + str(max_score_dev))
 
+    vocab = count_vectorizer.get_feature_names()
+    f = codecs.open('data/tokens.txt', 'w', 'utf-8')
+    for ele in vocab:
+        f.write(ele + '\n')
 
-# logistic regression without cross val
+    f.close()
 
     main()
 

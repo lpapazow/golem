@@ -115,7 +115,10 @@ if __name__ == '__main__':
     emotions_predicted = ["anger-pred", "anticipation-pred", "disgust-pred", "fear-pred", "joy-pred",
                 "love-pred", "optimism-pred", "pessimism-pred", "sadness-pred", "surprise-pred", "trust-pred"]
 
-    data_dev.to_csv('data/data_csv/2018-E-c-En-train-logit-predictions.txt', columns=emotions_predicted, sep = "\t", index = False)
+    data_dev.to_csv('data/data_csv/2018-E-c-En-dev-logit-predictions.txt', columns=emotions_predicted, sep = "\t",
+                    index = False)
+    df.to_csv('data/data_csv/2018-E-c-En-train-logit-predictions.txt', columns=emotions_predicted, sep="\t",
+                    index=False)
 
     main()
 

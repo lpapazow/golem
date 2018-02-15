@@ -1,5 +1,6 @@
 from golem.parsers import csvtojson
 import nltk
+from nltk.wsd import lesk
 import pandas as pd
 import numpy as np
 import codecs
@@ -84,7 +85,7 @@ if __name__ == '__main__':
 
     count_vectorizer = StemmedCountVectorizer(
         analyzer="word", tokenizer=tknzr.tokenize,
-        preprocessor=None, stop_words='english', max_features=None)
+        preprocessor=None, stop_words='english', max_features=None,ngram_range =(1, 3), min_df=10)
 
     bag_of_words = count_vectorizer.fit_transform(data_merged['Tweet'])
 
@@ -96,7 +97,7 @@ if __name__ == '__main__':
     print("Score train: " + str(score_train)) # 0.843431663394
     print("Score dev: " + str(score_dev)) # 0.421218961625
 
-    regularizations = [2, 3, 5, 8, 13, 377]
+    regularizations = [2]
     max_reg = 0
     max_score_dev = 0
     max_score_train = 0
@@ -111,12 +112,10 @@ if __name__ == '__main__':
     print("Score train: " + str(max_score_train))
     print("Score dev: " + str(max_score_dev))
 
-    vocab = count_vectorizer.get_feature_names()
-    f = codecs.open('data/tokens.txt', 'w', 'utf-8')
-    for ele in vocab:
-        f.write(ele + '\n')
+    emotions_predicted = ["anger-pred", "anticipation-pred", "disgust-pred", "fear-pred", "joy-pred",
+                "love-pred", "optimism-pred", "pessimism-pred", "sadness-pred", "surprise-pred", "trust-pred"]
 
-    f.close()
+    data_dev.to_csv('data/data_csv/2018-E-c-En-train-logit-predictions.txt', columns=emotions_predicted, sep = "\t", index = False)
 
     main()
 
